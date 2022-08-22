@@ -57,4 +57,32 @@ router.get('/getCounselor', function (req, res, next) {
         
       }
 
+
+      router.get('/getCounselorsOfficeByOfficeId', function (req, res, next) {
+        const {officeId}=req.query
+        this.officeId=officeId;
+        console.log(this.officeId);
+   
+         try {
+             getCounselorsOfficeByOfficeId().then(({recordset}) => {
+               res.send(recordset) ;
+                 }).catch(err => {
+                    console.log( err);
+               }) 
+           }
+       catch (err){
+           console.log(err);
+           res.send("err");
+           }
+       })
+       
+       function getCounselorsOfficeByOfficeId(){
+       return  sql.connect(sqlConfig).then(pool => {
+             return pool.request()
+             .input('OfficeId', sql.Int, this.officeId)
+             .execute('spGetCounselorsOfficeByOfficeId')
+         })
+         
+       }
+
 module.exports = router
