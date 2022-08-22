@@ -22,7 +22,7 @@ app.use(cors());
 app.use('/project',projectService)
 app.use('/counselor',counselorService);
 app.use('/entrepreneur',entrepreneurService)
-app.use('/customers',customersService);
+// app.use('/customers',customersService);
 
 app.use((req,res,next) => {
     const error = new Error("not found")

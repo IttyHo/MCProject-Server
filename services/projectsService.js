@@ -24,8 +24,6 @@ catch (err){
 function getProjects(){
 return  sql.connect(sqlConfig).then(pool => {
       return pool.request()
-        //    .input('entrepreneurId', sql.Int, this.entrepreneurId)
-         // .output('output_parameter', sql.VarChar(50))
           .execute('spGetProjects')
   })
   
@@ -81,7 +79,6 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
       return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
                  .input('id', sql.Int, this.projectId)
-              //  .output('output_parameter', sql.VarChar(50))
                 .execute('spGetProjectById')
         })
         
