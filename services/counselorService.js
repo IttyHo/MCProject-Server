@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
+const {sqlConfig}=require('./dbService'); 
+const sql = require("mssql/msnodesqlv8")
 
 
 router.get('/getCounselor', function (req, res, next) {

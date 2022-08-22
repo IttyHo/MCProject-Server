@@ -12,7 +12,6 @@ const sqlConfig = {
   options: {
     trustedConnection: true
   }
-  //aaaaaaaaaaaaa
 };
 
 
