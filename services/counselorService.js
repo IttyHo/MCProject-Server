@@ -39,8 +39,6 @@ router.get('/getCounselor', function (req, res, next) {
 
       router.get('/getCounselorDetaileByOfficeId', function (req, res, next) {
        const {officeId}=req.query
-    //    this.officeId=officeId;
-    //    console.log(this.officeId);
   
         try {
             getCounselorDetaileByOfficeId(officeId).then(({recordset}) => {
