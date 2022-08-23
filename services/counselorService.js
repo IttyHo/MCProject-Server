@@ -13,9 +13,7 @@ router.get('/getCounselor', function (req, res, next) {
             getCounselor().then(({recordset}) => {
 
             if(counselorTypeReq){
-                console.log({recordset},"first");
                 recordset = recordset.filter(({CounselorOfficeType}) => counselorTypeReq===CounselorOfficeType );
-                console.log({recordset},"seconde");
 
             } 
               res.send(recordset) ;
