@@ -1,17 +1,23 @@
-
 const express = require('express');
 const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
 const {sqlConfig}=require('./dbService'); 
 const sql = require("mssql/msnodesqlv8");
-const officeId=null;
-const projectId=null;
 
 router.get('/getCounselor', function (req, res, next) {
        
-  
+     
+       const counselorTypeReq = req.query.counselorType;
+       console.log(counselorTypeReq,"counselorTypeReq");
         try {
             getCounselor().then(({recordset}) => {
+
+            if(counselorTypeReq){
+                console.log({recordset},"first");
+                recordset = recordset.filter(({CounselorOfficeType}) => counselorTypeReq===CounselorOfficeType );
+                console.log({recordset},"seconde");
+
+            } 
               res.send(recordset) ;
                 }).catch(err => {
                    console.log( err);
@@ -33,11 +39,11 @@ router.get('/getCounselor', function (req, res, next) {
 
       router.get('/getCounselorDetaileByOfficeId', function (req, res, next) {
        const {officeId}=req.query
-       this.officeId=officeId;
-       console.log(this.officeId);
+    //    this.officeId=officeId;
+    //    console.log(this.officeId);
   
         try {
-            getCounselorDetaileByOfficeId().then(({recordset}) => {
+            getCounselorDetaileByOfficeId(officeId).then(({recordset}) => {
               res.send(recordset) ;
                 }).catch(err => {
                    console.log( err);
@@ -49,23 +55,20 @@ router.get('/getCounselor', function (req, res, next) {
           }
       })
       
-      function getCounselorDetaileByOfficeId(){
+      function getCounselorDetaileByOfficeId(officeId){
       return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
-            .input('OfficeId', sql.Int, this.officeId)
+            .input('OfficeId', sql.Int, officeId)
             .execute('spGetCounselorDetaileByOfficeId')
         })
         
       }
 
-
       router.get('/getCounselorsOfficeByOfficeId', function (req, res, next) {
         const {officeId}=req.query
-        this.officeId=officeId;
-        console.log(this.officeId);
    
          try {
-             getCounselorsOfficeByOfficeId().then(({recordset}) => {
+             getCounselorsOfficeByOfficeId(officeId).then(({recordset}) => {
                res.send(recordset) ;
                  }).catch(err => {
                     console.log( err);
@@ -77,10 +80,10 @@ router.get('/getCounselor', function (req, res, next) {
            }
        })
        
-       function getCounselorsOfficeByOfficeId(){
+       function getCounselorsOfficeByOfficeId(officeId){
        return  sql.connect(sqlConfig).then(pool => {
              return pool.request()
-             .input('OfficeId', sql.Int, this.officeId)
+             .input('OfficeId', sql.Int, officeId)
              .execute('spGetCounselorsOfficeByOfficeId')
          })
          
@@ -88,11 +91,9 @@ router.get('/getCounselor', function (req, res, next) {
 
        router.get('/getCounselorOfficeByProjectId', function (req, res, next) {
         const {projectId}=req.query
-        this.projectId=projectId;
-        console.log(this.projectId);
-   
+        
          try {
-             getCounselorOfficeByProjectId().then(({recordset}) => {
+             getCounselorOfficeByProjectId(projectId).then(({recordset}) => {
                res.send(recordset) ;
                  }).catch(err => {
                     console.log( err);
@@ -104,12 +105,17 @@ router.get('/getCounselor', function (req, res, next) {
            }
        })
        
-       function getCounselorOfficeByProjectId(){
+       function getCounselorOfficeByProjectId(projectId){
        return  sql.connect(sqlConfig).then(pool => {
              return pool.request()
-             .input('ProjectId', sql.Int, this.projectId)
+             .input('ProjectId', sql.Int,projectId)
              .execute('spGetCounselorOfficeByProjectId')
          })
          
        }
 module.exports = router
+
+
+
+
+
