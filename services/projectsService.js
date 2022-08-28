@@ -4,7 +4,7 @@ const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
 const {sqlConfig}=require('./dbService'); 
 const sql = require("mssql/msnodesqlv8")
-const entrepreneurId=null
+ 
 
 router.get('/getProject', function (req, res, next) {
   try {
@@ -20,13 +20,24 @@ catch (err){
     }
 })
 
-function getProjects(){
-return  sql.connect(sqlConfig).then(pool => {
-      return pool.request()
-          .execute('spGetProjects')
+router.post('/addProject', function (req, res, next) {
+    try {
+      const project = req.body;
+      addProject(project).then(() => {
+          res.send(true) ;
+            }).catch(err => {
+               console.log( err);
+               res.send(false) ;
+          }) 
+      }
+  catch (err){
+      console.log(err);
+      res.send("err");
+      }
   })
-  
-}
+
+
+
 
 router.get('/getProjectByEntrepreneurId', function (req, res, next) {
       const {entrepreneurId} = req.query;
@@ -45,17 +56,6 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
         res.send("err");
         }
     })
-    
-    function getProjectByEntrepreneurId(){
-        console.log(this.entrepreneurId);
-    return  sql.connect(sqlConfig).then(pool => {
-          return pool.request()
-               .input('EntrepreneurId', sql.Int, this.entrepreneurId)
-            //  .output('output_parameter', sql.VarChar(50))
-              .execute('spGetProjectByEntrepreneurId')
-      })
-      
-    }
     router.get('/getProjectById', function (req, res, next) {
         const {projectId} = req.query;
         console.log({projectId});
@@ -81,5 +81,36 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
         })
         
       }
+ function getProjects(){
+        return  sql.connect(sqlConfig).then(pool => {
+            return pool.request()
+                .execute('spGetProjects')
+        })
+      
+  }
 
+  function getProjectByEntrepreneurId(){
+    console.log(this.entrepreneurId);
+        return  sql.connect(sqlConfig).then(pool => {
+         return pool.request()
+           .input('EntrepreneurId', sql.Int, this.entrepreneurId)
+        //  .output('output_parameter', sql.VarChar(50))
+          .execute('spGetProjectByEntrepreneurId')
+  })
+  
+  }
+
+  function addProject(project){
+    return  sql.connect(sqlConfig).then(pool => {
+        const {ProjectName,ProjectCompany,ProjectAdress,ProjectType,EntrepreneurId} = project;
+        return pool.request()
+        .input('ProjectName', sql.NVarChar, ProjectName)
+        .input('ProjectCompany', sql.NVarChar, ProjectCompany)
+        .input('ProjectAdress', sql.NVarChar, ProjectAdress)
+        .input('ProjectType', sql.Int, ProjectType)
+        .input('EntrepreneurId', sql.Int, EntrepreneurId)
+        .execute('spAddProject')
+    })
+  
+}
 module.exports = router

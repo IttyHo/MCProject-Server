@@ -8,7 +8,6 @@ router.get('/getCounselor', function (req, res, next) {
        
      
        const counselorTypeReq = req.query.counselorType;
-       console.log(counselorTypeReq,"counselorTypeReq");
         try {
             getCounselor().then(({recordset}) => {
 

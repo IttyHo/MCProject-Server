@@ -3,7 +3,6 @@ const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
 const {sqlConfig}=require('./dbService'); 
 const sql = require("mssql/msnodesqlv8")
-const entrepreneurId=null
 
 router.get('/getEntrepreneur', function (req, res, next) {
     try {
@@ -31,11 +30,9 @@ function getEntrepreneur(){
     }
     router.get('/getProjectByEntrepreneurId', function (req, res, next) {
         const {entrepreneurId} = req.query;
-        this.entrepreneurId=entrepreneurId
-        console.log(this.entrepreneurId);
   
         try {
-          getProjectByEntrepreneurId().then(({recordset}) => {
+          getProjectByEntrepreneurId(entrepreneurId).then(({recordset}) => {
               res.send(recordset) ;
                 }).catch(err => {
                    console.log( err);
@@ -47,10 +44,10 @@ function getEntrepreneur(){
           }
       })
       
-      function getProjectByEntrepreneurId(){
+      function getProjectByEntrepreneurId(entrepreneurId){
       return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
-                 .input('EntrepreneurId', sql.Int, this.entrepreneurId)
+                 .input('EntrepreneurId', sql.Int, entrepreneurId)
                 .execute('spGetProjectByEntrepreneurId')
         })
         
