@@ -1,18 +1,15 @@
 
 const express = require('express')
 const app = express()
- 
-
 
 const sqlConfig = {
-  server: '.',
+  server: 'DESKTOP-5QTPEIA\\SQLEXPRESS',
   port: 1433,
   database: "MCProject",
   //driver: "msnodesqlv8",
   options: {
     trustedConnection: true
   }
-  //aaaaaaaaaaaaa
 };
 
 

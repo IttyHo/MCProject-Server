@@ -2,60 +2,112 @@
 const express = require('express');
 const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
-
+const {sqlConfig}=require('./dbService'); 
+const sql = require("mssql/msnodesqlv8")
+ 
 
 router.get('/getProject', function (req, res, next) {
-    try {
-        //     ---hardCoded
-        res.send(
-            [
-                { projectID: 10001 ,
-                    projectCompany:"MC רימונים",
-                    projectName: "מיכקשוילי 15" ,
-                    projectMail:"itty1788@gmail.com",
-                    projectPhone: "0527627574" ,
-                    projectAddress:"מיכקשוילי 15",
-                    projectSecretary:"אורטל",
-                    projectType:'תב"ע בלבד',
-
-                },
-                { projectID: 10002 ,
-                    projectCompany:"MC פרויקטים",
-                    projectName: "חומות רובע ז" ,
-                    projectMail:"chomotrovaz@mcprojects.co.il",
-                    projectPhone: "0534155166" ,
-                    projectAddress:"אברהם שפירא 1",
-                    projectSecretary:"הודיה",
-                    projectType:'תב"ע בלבד',
-
-
-                },
-                { projectID: 10003 ,
-                    projectCompany:"בית יוסף",
-                    projectName: "נתן אלבז 24",
-                    projectMail:"natanElbaz24@gmail.com",
-                    projectPhone: "088658615" ,
-                    projectAddress:"נתן אלבז 24",
-                    projectSecretary:"נורית",             
-                    projectType:'תב"ע +אישורים',
-
-
-                },
-               
-            ]
-        )
-
-        //      ---SQL
-        // getCustFromSQL(name).then(({ recordset }) => {
-        //     res.send(recordset)
-        // }).catch(err => {
-        //     console.log(err);
-        // })
-        
+  try {
+    getProjects().then(({recordset}) => {
+        res.send(recordset) ;
+          }).catch(err => {
+             console.log( err);
+        }) 
     }
-    catch (err) {
-        res.send([]);
+catch (err){
+    console.log(err);
+    res.send("err");
     }
 })
 
+router.post('/addProject', function (req, res, next) {
+    try {
+      const project = req.body;
+      addProject(project).then(() => {
+          res.send(true) ;
+            }).catch(err => {
+               console.log( err);
+               res.send(false) ;
+          }) 
+      }
+  catch (err){
+      console.log(err);
+      res.send("err");
+      }
+  })
+
+router.get('/getProjectByEntrepreneurId', function (req, res, next) {
+      const {entrepreneurId} = req.query;
+      this.entrepreneurId=entrepreneurId
+      console.log(this.entrepreneurId);
+
+      try {
+        getProjectByEntrepreneurId().then(({recordset}) => {
+            res.send(recordset) ;
+              }).catch(err => {
+                 console.log( err);
+            }) 
+        }
+    catch (err){
+        console.log(err);
+        res.send("err");
+        }
+    })
+router.get('/getProjectById', function (req, res, next) {
+        const {projectId} = req.query;
+        console.log({projectId});
+  
+        try {
+          getProjectById(projectId).then(({recordset}) => {
+              res.send(recordset) ;
+                }).catch(err => {
+                   console.log( err);
+              }) 
+          }
+      catch (err){
+          console.log(err);
+          res.send("err");
+          }
+      })
+      
+  function getProjectById(projectId){
+      return  sql.connect(sqlConfig).then(pool => {
+            return pool.request()
+                 .input('id', sql.Int, projectId)
+                .execute('spGetProjectById')
+        })
+        
+      }
+  function getProjects(){
+        return  sql.connect(sqlConfig).then(pool => {
+            return pool.request()
+                .execute('spGetProjects')
+        })
+      
+  }
+  function getProjectByEntrepreneurId(){
+    console.log(this.entrepreneurId);
+        return  sql.connect(sqlConfig).then(pool => {
+         return pool.request()
+           .input('EntrepreneurId', sql.Int, this.entrepreneurId)
+        //  .output('output_parameter', sql.VarChar(50))
+          .execute('spGetProjectByEntrepreneurId')
+  })
+  
+  }
+
+  function addProject(project){
+    return  sql.connect(sqlConfig).then(pool => {
+        const {ProjectName,ProjectCompany,ProjectAdress,ProjectType,ProjectRova,EntrepreneurId} = project;
+        return pool.request()
+        .input('ProjectName', sql.NVarChar, ProjectName)
+        .input('ProjectCompany', sql.NVarChar, ProjectCompany)
+        .input('ProjectAdress', sql.NVarChar, ProjectAdress)
+        .input('ProjectType', sql.Int, ProjectType)
+        .input('ProjectRova', sql.NVarChar, ProjectRova)
+        .input('EntrepreneurId', sql.Int, EntrepreneurId)
+        .execute('spAddProject')
+    })
+  
+}
 module.exports = router

@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const app = express();
  
 const { getConfig } =  require('./services/configService');
-const customersService =   require('./services/customersService');
 const counselorService=require('./services/counselorService');
 const entrepreneurService=require('./services/entrepreneursService');
 const projectService=require('./services/projectsService');
@@ -22,7 +21,6 @@ app.use(cors());
 app.use('/project',projectService)
 app.use('/counselor',counselorService);
 app.use('/entrepreneur',entrepreneurService)
-app.use('/customers',customersService);
 
 app.use((req,res,next) => {
     const error = new Error("not found")

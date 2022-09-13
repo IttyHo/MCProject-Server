@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
-
+///123
 
 router.get('/getCustomers', function (req, res, next) {
     try {
