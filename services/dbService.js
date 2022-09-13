@@ -1,8 +1,6 @@
 
 const express = require('express')
 const app = express()
- 
-
 
 const sqlConfig = {
   server: 'DESKTOP-5QTPEIA\\SQLEXPRESS',

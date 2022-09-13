@@ -4,16 +4,34 @@ const { getCustFromSQL } = require('./dbService');
 const {sqlConfig}=require('./dbService'); 
 const sql = require("mssql/msnodesqlv8");
 
-router.get('/getCounselor', function (req, res, next) {
-       
-     
+router.get('/getCounselorOfficeType', function (req, res, next) {    
+  // const counselorTypeReq = req.query.counselorType;
+   try {
+       getCounselorOfficeType().then(({recordset}) => {
+         res.send(recordset) ;
+           }).catch(err => {
+              console.log( err);
+         }) 
+     }
+ catch (err){
+     console.log(err);
+     res.send("err");
+     }
+ })
+ function getCounselorOfficeType(){
+  return  sql.connect(sqlConfig).then(pool => {
+        return pool.request()
+            .execute('spGetCounselorOfficeType')
+    })
+    
+  }
+router.get('/getCounselor', function (req, res, next) {    
        const counselorTypeReq = req.query.counselorType;
         try {
             getCounselor().then(({recordset}) => {
 
             if(counselorTypeReq){
                 recordset = recordset.filter(({CounselorOfficeType}) => counselorTypeReq===CounselorOfficeType );
-
             } 
               res.send(recordset) ;
                 }).catch(err => {
@@ -108,6 +126,40 @@ router.get('/getCounselor', function (req, res, next) {
          })
          
        }
+
+       router.post('/addCounselor', function (req, res, next) {
+        try {
+          const counselor = req.body;
+          addCounselor(counselor).then(() => {
+              res.send(true) ;
+                }).catch(err => {
+                   console.log( err);
+                   res.send(false) ;
+              }) 
+          }
+      catch (err){
+          console.log(err);
+          res.send("err");
+          }
+      })
+      function addCounselor(counselor){
+        return  sql.connect(sqlConfig).then(pool => {
+            const {CounselorOfficeName,CounselorOfficeAdress,CounselorOfficePhone,CounselorOfficeType,CounselorOfficeManager,CounselorOfficeManagerPhone,CounselorOfficeManagerMail,CounselorOfficeMainSecretary,CounselorOfficeMainSecretaryPhone,CounselorOfficeMainSecretaryMail} = counselor;
+            return pool.request()
+            .input('CounselorOfficeName', sql.NVarChar, CounselorOfficeName)
+            .input('CounselorOfficeAdress', sql.NVarChar, CounselorOfficeAdress)
+            .input('CounselorOfficePhone', sql.NVarChar, CounselorOfficePhone)
+            .input('CounselorOfficeType', sql.Int, CounselorOfficeType)
+            .input('CounselorOfficeManager', sql.NVarChar, CounselorOfficeManager)
+            .input('CounselorOfficeManagerPhone', sql.NVarChar, CounselorOfficeManagerPhone)
+            .input('CounselorOfficeManagerMail', sql.NVarChar, CounselorOfficeManagerMail)
+            .input('CounselorOfficeMainSecretary', sql.NVarChar, CounselorOfficeMainSecretary)
+            .input('CounselorOfficeMainSecretaryPhone', sql.NVarChar, CounselorOfficeMainSecretaryPhone)
+            .input('CounselorOfficeMainSecretaryMail', sql.NVarChar, CounselorOfficeMainSecretaryMail)
+
+            .execute('spAddCounselor')
+        })
+      }
 module.exports = router
 
 

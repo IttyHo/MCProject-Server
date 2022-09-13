@@ -36,9 +36,6 @@ router.post('/addProject', function (req, res, next) {
       }
   })
 
-
-
-
 router.get('/getProjectByEntrepreneurId', function (req, res, next) {
       const {entrepreneurId} = req.query;
       this.entrepreneurId=entrepreneurId
@@ -56,7 +53,7 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
         res.send("err");
         }
     })
-    router.get('/getProjectById', function (req, res, next) {
+router.get('/getProjectById', function (req, res, next) {
         const {projectId} = req.query;
         console.log({projectId});
   
@@ -73,7 +70,7 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
           }
       })
       
-      function getProjectById(projectId){
+  function getProjectById(projectId){
       return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
                  .input('id', sql.Int, projectId)
@@ -81,14 +78,13 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
         })
         
       }
- function getProjects(){
+  function getProjects(){
         return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
                 .execute('spGetProjects')
         })
       
   }
-
   function getProjectByEntrepreneurId(){
     console.log(this.entrepreneurId);
         return  sql.connect(sqlConfig).then(pool => {
@@ -102,12 +98,13 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
 
   function addProject(project){
     return  sql.connect(sqlConfig).then(pool => {
-        const {ProjectName,ProjectCompany,ProjectAdress,ProjectType,EntrepreneurId} = project;
+        const {ProjectName,ProjectCompany,ProjectAdress,ProjectType,ProjectRova,EntrepreneurId} = project;
         return pool.request()
         .input('ProjectName', sql.NVarChar, ProjectName)
         .input('ProjectCompany', sql.NVarChar, ProjectCompany)
         .input('ProjectAdress', sql.NVarChar, ProjectAdress)
         .input('ProjectType', sql.Int, ProjectType)
+        .input('ProjectRova', sql.NVarChar, ProjectRova)
         .input('EntrepreneurId', sql.Int, EntrepreneurId)
         .execute('spAddProject')
     })
