@@ -128,7 +128,6 @@ function getCounselorOfficeByProjectId(projectId) {
 router.post('/addCounselor', function (req, res, next) {
   try {
     const counselor = req.body;
-    console.log(counselor);
     addCounselor(counselor).then(() => {
       res.send(true);
     }).catch(err => {
@@ -157,6 +156,31 @@ function addCounselor(counselor) {
       .input('CounselorOfficeMainSecretaryMail', sql.NVarChar, CounselorOfficeMainSecretaryMail)
 
       .execute('spAddCounselor')
+  })
+}
+
+router.post('/addCounselorType', function (req, res, next) {
+  try {
+    const counselorType = req.body;
+    console.log(counselorType);
+    addCounselorType(counselorType).then(() => {
+      res.send(true);
+    }).catch(err => {
+      console.log(err);
+      res.send(false);
+    })
+  }
+  catch (err) {
+    console.log(err);
+    res.send("err");
+  }
+})
+function addCounselorType(counselorType) {
+  return sql.connect(sqlConfig).then(pool => {
+    const cunselorType=counselorType.counselorType
+    return pool.request()
+      .input('TypeName', sql.NVarChar, cunselorType)
+      .execute('spAddCounselorType')
   })
 }
 module.exports = router
