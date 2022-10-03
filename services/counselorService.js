@@ -27,6 +27,7 @@ function getCounselorOfficeType() {
 }
 router.get('/getCounselor', function (req, res, next) {
   const counselorTypeReq = req.query.counselorType;
+  console.log(counselorTypeReq,"counselorTypeReq");
   try {
     getCounselor().then(({ recordset }) => {
 
@@ -162,7 +163,7 @@ function addCounselor(counselor) {
 router.post('/addCounselorType', function (req, res, next) {
   try {
     const counselorType = req.body;
-    console.log(counselorType);
+    console.log(counselorType,"ct");
     addCounselorType(counselorType).then(() => {
       res.send(true);
     }).catch(err => {

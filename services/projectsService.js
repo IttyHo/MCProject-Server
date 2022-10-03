@@ -4,7 +4,9 @@ const router = express.Router();
 const { getCustFromSQL } = require('./dbService');
 const {sqlConfig}=require('./dbService'); 
 const sql = require("mssql/msnodesqlv8")
- 
+const fs = require('fs');
+const path = require('path');
+const { getConfig } = require('./configService');
 
 router.get('/getProject', function (req, res, next) {
   try {
@@ -97,6 +99,7 @@ router.get('/getProjectById', function (req, res, next) {
   }
 
   function addProject(project){
+    saveProjectInRova(project);
     return  sql.connect(sqlConfig).then(pool => {
         const {ProjectName,ProjectCompany,ProjectAdress,ProjectType,ProjectRova,EntrepreneurId} = project;
         return pool.request()
@@ -109,5 +112,45 @@ router.get('/getProjectById', function (req, res, next) {
         .execute('spAddProject')
     })
   
+}
+
+function saveProjectInRova(project) { 
+ try{
+    getConfig().then (
+        (config) => {
+            const dir =config.PROJECT_DIR;
+
+            // check if directory exists
+            if (!fs.existsSync(dir)) {
+                console.log('Directory not exists!');
+            } else {
+                const newFolder = path.join(dir,getRovaName(project.ProjectRova))
+                const inNewFolder= path.join(newFolder,project.ProjectName)
+
+                if (!fs.existsSync(newFolder)) {
+                    fs.mkdirSync(newFolder);
+                    // if(!fs.existsSync(inNewFolder)) {
+                        fs.mkdirSync(inNewFolder);}
+                    // }
+                        else{
+                        if (!fs.existsSync(inNewFolder)) {
+                            fs.mkdirSync(inNewFolder);}
+                        else{
+                       console.log("your project is not a new project");     
+                        }
+                            if (!fs.existsSync(inNewFolder)) {
+                                fs.mkdirSync(inNewFolder);}
+                        }
+                    }
+               }                   
+         )
+    }
+    catch(ex){
+        console.error(ex.message)
+    }
+}
+
+function getRovaName(rova){
+    return `רובע ${rova}`
 }
 module.exports = router
