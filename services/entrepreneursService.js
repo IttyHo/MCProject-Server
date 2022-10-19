@@ -20,6 +20,22 @@ router.post('/addEntrepreneur', function (req, res, next) {
     }
 })
 
+router.post('/deleteEntrepreneur', function (req, res, next) {
+    try {
+        const entrepreneur = req.body;
+        deleteEntrepreneur(entrepreneur).then(() => {
+            res.send(true);
+        }).catch(err => {
+            console.log(err);
+            res.send(false);
+        })
+    }
+    catch (err) {
+        console.log(err);
+        res.send("err");
+    }
+})
+
 router.get('/getEntrepreneur', function (req, res, next) {
     try {
         getEntrepreneur().then(({ recordset }) => {
@@ -68,7 +84,15 @@ function getProjectByEntrepreneurId(entrepreneurId) {
     })
 
 }
+function deleteEntrepreneur(entrepreneur) {
+    return sql.connect(sqlConfig).then(pool => {
+        const { entrepreneurId } = entrepreneur;
+        return pool.request()
+            .input('EntrepreneurId', sql.NVarChar, entrepreneurId)         
+            .execute('spDeleteEntrepreneur')
+    })
 
+}
 function addEntrepreneur(entrepreneur) {
     return sql.connect(sqlConfig).then(pool => {
         const { EntrepreneurCompany, EntrepreneurName, EntrepreneurPhone, EntrepreneurCompanyAddress
