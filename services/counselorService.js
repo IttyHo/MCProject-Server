@@ -53,6 +53,33 @@ function getCounselor() {
 
 }
 
+router.post('/deleteCounselor', function (req, res, next) {
+  try {
+      const counselor = req.body;
+      console.log(counselor);
+      deleteCounselor(counselor).then(() => {
+          res.send(true);
+      }).catch(err => {
+          console.log(err);
+          res.send(false);
+      })
+  }
+  catch (err) {
+      console.log(err);
+      res.send("err");
+  }
+})
+
+function deleteCounselor(counselor) {
+  return sql.connect(sqlConfig).then(pool => {
+      const { CounselorOfficeId } = counselor;
+      return pool.request()
+          .input('id', sql.Int, CounselorOfficeId)         
+          .execute('spDeleteCounselor')
+  })
+
+}
+
 router.get('/getCounselorDetaileByOfficeId', function (req, res, next) {
   const { officeId } = req.query
 

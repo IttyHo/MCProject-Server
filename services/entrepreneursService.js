@@ -23,6 +23,7 @@ router.post('/addEntrepreneur', function (req, res, next) {
 router.post('/deleteEntrepreneur', function (req, res, next) {
     try {
         const entrepreneur = req.body;
+        // console.log(entrepreneur);
         deleteEntrepreneur(entrepreneur).then(() => {
             res.send(true);
         }).catch(err => {
@@ -86,9 +87,9 @@ function getProjectByEntrepreneurId(entrepreneurId) {
 }
 function deleteEntrepreneur(entrepreneur) {
     return sql.connect(sqlConfig).then(pool => {
-        const { entrepreneurId } = entrepreneur;
+        const { EntrepreneurId } = entrepreneur;
         return pool.request()
-            .input('EntrepreneurId', sql.NVarChar, entrepreneurId)         
+            .input('id', sql.Int, EntrepreneurId)         
             .execute('spDeleteEntrepreneur')
     })
 
