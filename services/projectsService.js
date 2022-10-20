@@ -38,6 +38,24 @@ router.post('/addProject', function (req, res, next) {
       }
   })
 
+  router.post('/deleteProject', function (req, res, next) {
+    try {
+      const project = req.body;
+      console.log(project);
+      deleteProject(project).then(() => {
+          res.send(true) ;
+            }).catch(err => {
+               console.log( err);
+               res.send(false) ;
+          }) 
+      }
+  catch (err){
+      console.log(err);
+      res.send("err");
+      }
+  })
+
+
 router.get('/getProjectByEntrepreneurId', function (req, res, next) {
       const {entrepreneurId} = req.query;
       this.entrepreneurId=entrepreneurId
@@ -71,8 +89,18 @@ router.get('/getProjectById', function (req, res, next) {
           res.send("err");
           }
       })
-      
-  function getProjectById(projectId){
+ 
+    function deleteProject(project) {
+        return sql.connect(sqlConfig).then(pool => {
+            const { ProjectId } = project;
+            return pool.request()
+                .input('id', sql.Int, ProjectId)         
+                .execute('spDeleteProject')
+        })
+    
+        }
+
+    function getProjectById(projectId){
       return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
                  .input('id', sql.Int, projectId)
@@ -80,14 +108,14 @@ router.get('/getProjectById', function (req, res, next) {
         })
         
       }
-  function getProjects(){
+     function getProjects(){
         return  sql.connect(sqlConfig).then(pool => {
             return pool.request()
                 .execute('spGetProjects')
         })
       
-  }
-  function getProjectByEntrepreneurId(){
+     }
+     function getProjectByEntrepreneurId(){
     console.log(this.entrepreneurId);
         return  sql.connect(sqlConfig).then(pool => {
          return pool.request()
@@ -96,9 +124,9 @@ router.get('/getProjectById', function (req, res, next) {
           .execute('spGetProjectByEntrepreneurId')
   })
   
-  }
+     }
 
-  function addProject(project){
+    function addProject(project){
     saveProjectInRova(project);
     return  sql.connect(sqlConfig).then(pool => {
         const {ProjectName,ProjectCompany,ProjectAdress,ProjectType,ProjectRova,EntrepreneurId} = project;
@@ -112,7 +140,7 @@ router.get('/getProjectById', function (req, res, next) {
         .execute('spAddProject')
     })
   
-}
+    }
 
 function saveProjectInRova(project) { 
  try{
