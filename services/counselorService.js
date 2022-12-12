@@ -56,6 +56,7 @@ function getCounselor() {
 router.post('/deleteCounselor', function (req, res, next) {
   try {
       const counselor = req.body;
+      
       console.log(counselor);
       deleteCounselor(counselor).then(() => {
           res.send(true);
@@ -186,7 +187,44 @@ function addCounselor(counselor) {
       .execute('spAddCounselor')
   })
 }
-
+router.post('/updateCounselor', function (req, res, next) {
+  try {
+    const counselor = req.body;
+    updateCounselor(counselor).then(() => {
+      res.send(true);
+    }).catch(err => {
+      console.log(err);
+      res.send(false);
+    })
+  }
+  catch (err) {
+    console.log(err);
+    res.send("err");
+  }
+})
+function updateCounselor(counselor) {
+  return sql.connect(sqlConfig).then(pool => {
+    const {CounselorOfficeId, CounselorOfficeName,
+       CounselorOfficeAdress, CounselorOfficePhone, 
+       CounselorOfficeType, CounselorOfficeManager, 
+       CounselorOfficeManagerPhone, CounselorOfficeManagerMail, 
+       CounselorOfficeMainSecretary, CounselorOfficeMainSecretaryPhone, 
+       CounselorOfficeMainSecretaryMail } = counselor;
+    return pool.request()
+      .input('CounselorOfficeId', sql.Int, CounselorOfficeId)
+      .input('CounselorOfficeName', sql.NVarChar, CounselorOfficeName)
+      .input('CounselorOfficeAdress', sql.NVarChar, CounselorOfficeAdress)
+      .input('CounselorOfficePhone', sql.NVarChar, CounselorOfficePhone)
+      .input('CounselorOfficeType', sql.Int, CounselorOfficeType)
+      .input('CounselorOfficeManager', sql.NVarChar, CounselorOfficeManager)
+      .input('CounselorOfficeManagerPhone', sql.NVarChar, CounselorOfficeManagerPhone)
+      .input('CounselorOfficeManagerMail', sql.NVarChar, CounselorOfficeManagerMail)
+      .input('CounselorOfficeMainSecretary', sql.NVarChar, CounselorOfficeMainSecretary)
+      .input('CounselorOfficeMainSecretaryPhone', sql.NVarChar, CounselorOfficeMainSecretaryPhone)
+      .input('CounselorOfficeMainSecretaryMail', sql.NVarChar, CounselorOfficeMainSecretaryMail)
+      .execute('spUpdateCounselor')
+  })
+}
 router.post('/addCounselorType', function (req, res, next) {
   try {
     const counselorType = req.body;

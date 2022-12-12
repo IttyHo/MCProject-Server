@@ -77,6 +77,46 @@ router.get('/getProjectByEntrepreneurId', function (req, res, next) {
     }
 })
 
+router.post('/updateEntrepreneur', function (req, res, next) {
+    try {
+      const entrepreneur = req.body;
+      updateEntrepreneur(entrepreneur).then(() => {
+        res.send(true);
+      }).catch(err => {
+        console.log(err);
+        res.send(false);
+      })
+    }
+    catch (err) {
+      console.log(err);
+      res.send("err");
+    }
+  })
+function updateEntrepreneur(entrepreneur) {
+    return sql.connect(sqlConfig).then(pool => {
+        const {EntrepreneurId, EntrepreneurCompany, EntrepreneurName, EntrepreneurPhone, EntrepreneurCompanyAddress
+            , EntrepreneurCompanyAddressToSend, EntrepreneurCompanyPhone,
+            EntrepreneurCompanyFax, EntrepreneurCompanyMail, EntrepreneurMail, OfficeAdress
+            , EntrepreneurSecretary, EntrepreneurSecretaryPhone,
+            EntrepreneurSecretaryMail } = entrepreneur;
+    return pool.request()
+      .input('EntrepreneurId', sql.NVarChar, EntrepreneurId)
+      .input('EntrepreneurName', sql.NVarChar, EntrepreneurName)
+      .input('EntrepreneurCompany', sql.NVarChar, EntrepreneurCompany)
+      .input('EntrepreneurPhone', sql.NVarChar, EntrepreneurPhone)
+      .input('EntrepreneurMail', sql.NVarChar, EntrepreneurMail)
+      .input('OfficeAdress', sql.NVarChar, OfficeAdress)
+      .input('EntrepreneurSecretary', sql.NVarChar, EntrepreneurSecretary)
+      .input('EntrepreneurSecretaryPhone', sql.NVarChar, EntrepreneurSecretaryPhone)
+      .input('EntrepreneurSecretaryMail', sql.NVarChar, EntrepreneurSecretaryMail)
+      .input('EntrepreneurCompanyAddress', sql.NVarChar, EntrepreneurCompanyAddress)
+      .input('EntrepreneurCompanyAddressToSend', sql.NVarChar, EntrepreneurCompanyAddressToSend)
+      .input('EntrepreneurCompanyPhone', sql.NVarChar, EntrepreneurCompanyPhone)
+      .input('EntrepreneurCompanyFax', sql.NVarChar, EntrepreneurCompanyFax)
+      .input('EntrepreneurCompanyMail', sql.NVarChar, EntrepreneurCompanyMail)
+        .execute('spUpdateEntrepreneur')
+    })
+  }
 function getProjectByEntrepreneurId(entrepreneurId) {
     return sql.connect(sqlConfig).then(pool => {
         return pool.request()
